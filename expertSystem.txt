@@ -1,14 +1,17 @@
+start_left = input("Введите начальное количество в левой кучке: ")
+start_left = int(start_left)
+s_max = input("Введите максимально возможное количество камней в правой кучке: ")
+s_max = int(s_max)
+rocks_sum = input("Введите сумму количества камней для выполнения условия: ")
+rocks_sum = int(rocks_sum)
 
-# Online Python - IDE, Editor, Compiler, Interpreter
-s = 83
-pmax = 73
 def check_arr(arr):
     res = False
     for item in arr:
         res = res or check(item)
     return res
 def check(arr):
-    if arr[0] + arr[1] >= s:
+    if arr[0] + arr[1] >= rocks_sum:
         return True
     else: 
         return False
@@ -75,22 +78,21 @@ def task_3(p1, p2):
                 tmp_res = True
     return tmp_res and tmp_res2   
 
-for n in range(1, pmax + 1):
+for n in range(1, s_max + 1):
     #print(n)
-    if task_1(9, n):
-        print('Task 1 res is', n)
+    if task_1(start_left, n):
+        print('Результат задания 1:', n)
         break
 task_2_res = []
-for n in range(1, pmax + 1):
+for n in range(1, s_max + 1):
     #print(">", n)
-    if task_2(9, n):
+    if task_2(start_left, n):
         task_2_res.append(n)
-print('Task 2 res is', task_2_res)
+print('Результат задания 2:', task_2_res)
 
 task_3_res = []
-for n in range(1, pmax + 1):
+for n in range(1, s_max + 1):
     #print(">", n)
-    if task_3(9, n):
+    if task_3(start_left, n):
         task_3_res.append(n)
-print('Task 3 res is', min(task_3_res))
-
+print('Результат задания 3:', min(task_3_res))
