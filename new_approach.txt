@@ -1,0 +1,40 @@
+
+# Online Python - IDE, Editor, Compiler, Interpreter
+task_type = input("Введите тип задачи (согласно файлу с задачами): ")
+task_type = int(task_type)
+start_left = input("Введите начальное количество в левой кучке: ")
+start_left = int(start_left)
+s_max = input("Введите максимально возможное количество камней в правой кучке: ")
+s_max = int(s_max)
+rocks_sum = input("Введите сумму количества камней для выполнения условия: ")
+rocks_sum = int(rocks_sum)
+
+def resolve_recursively(arr):
+    new_arr = []
+    for item in arr:
+        if type(item) == list:
+            item = resolve_recursively(item)
+        new_arr.append(item)
+    return any(new_arr)
+
+def unified_resolver(a, b, winMove, prevMoves=0):
+    if a + b >= rocks_sum:
+        return prevMoves % 2 == winMove % 2
+    if prevMoves == winMove:
+        return False
+    h = [unified_resolver(a+1, b, winMove, prevMoves+1),
+          unified_resolver(a*2, b, winMove, prevMoves+1), 
+          unified_resolver(a, b+1, winMove, prevMoves+1),
+          unified_resolver(a, b*2, winMove, prevMoves+1)]
+    return h
+if task_type == 1:
+    #print("Задание 1:", min(s for s in range(1,s_max+1) if type(unified_resolver(start_left,s,2)) == ))
+    for s in range(1, s_max+1):
+        res = unified_resolver(start_left,s,2)
+        resolve_recursively(res)
+        print(s, res, resolve_recursively(res))
+        
+    #print("Задание 2:", *[s for s in range(1,s_max+1) if not unified_resolver(start_left,s,1) and unified_resolver(start_left,s,3)])
+    #print("Задание 3:", min(s for s in range(1,s_max+1) if not unified_resolver(start_left,s,2) and unified_resolver(start_left,s,4)))
+
+    
