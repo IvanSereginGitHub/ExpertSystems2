@@ -8,33 +8,36 @@ s_max = input("Введите максимально возможное коли
 s_max = int(s_max)
 rocks_sum = input("Введите сумму количества камней для выполнения условия: ")
 rocks_sum = int(rocks_sum)
-
 def resolve_recursively(arr):
     new_arr = []
+    if type(arr) == bool:
+        return arr
     for item in arr:
         if type(item) == list:
             item = resolve_recursively(item)
         new_arr.append(item)
     return any(new_arr)
-
+    
+def resolve_recursively_all(arr):
+    new_arr = []
+    if type(arr) == bool:
+        return arr
+    for item in arr:
+        if type(item) == list:
+            item = resolve_recursively(item)
+        new_arr.append(item)
+    return all(new_arr)
+    
 def unified_resolver(a, b, winMove, prevMoves=0):
     if a + b >= rocks_sum:
-        return prevMoves % 2 == winMove % 2
+        return winMove % 2 == prevMoves % 2
     if prevMoves == winMove:
         return False
-    h = [unified_resolver(a+1, b, winMove, prevMoves+1),
+    h = [unified_resolver(a+2, b, winMove, prevMoves+1),
           unified_resolver(a*2, b, winMove, prevMoves+1), 
-          unified_resolver(a, b+1, winMove, prevMoves+1),
+          unified_resolver(a, b+2, winMove, prevMoves+1),
           unified_resolver(a, b*2, winMove, prevMoves+1)]
     return h
-if task_type == 1:
-    #print("Задание 1:", min(s for s in range(1,s_max+1) if type(unified_resolver(start_left,s,2)) == ))
-    for s in range(1, s_max+1):
-        res = unified_resolver(start_left,s,2)
-        resolve_recursively(res)
-        print(s, res, resolve_recursively(res))
-        
-    #print("Задание 2:", *[s for s in range(1,s_max+1) if not unified_resolver(start_left,s,1) and unified_resolver(start_left,s,3)])
-    #print("Задание 3:", min(s for s in range(1,s_max+1) if not unified_resolver(start_left,s,2) and unified_resolver(start_left,s,4)))
-
-    
+if task_type == 2:
+    print("Задание 1:", min(s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) and resolve_recursively(unified_resolver(start_left,s,2))))
+    print("Задание 2:", *[s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) and any(i for i in range(len(unified_resolver(start_left,s,1))) if resolve_recursively_all(unified_resolver(start_left,s,3)[i]))])
