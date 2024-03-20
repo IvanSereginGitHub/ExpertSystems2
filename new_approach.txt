@@ -1,13 +1,28 @@
 
 # Online Python - IDE, Editor, Compiler, Interpreter
-task_type = input("Введите тип задачи (согласно файлу с задачами): ")
-task_type = int(task_type)
 start_left = input("Введите начальное количество в левой кучке: ")
 start_left = int(start_left)
 s_max = input("Введите максимально возможное количество камней в правой кучке: ")
 s_max = int(s_max)
 rocks_sum = input("Введите сумму количества камней для выполнения условия: ")
 rocks_sum = int(rocks_sum)
+def check_arr(arr):
+    res = False
+    for item in arr:
+        res = res or check(item)
+    return res
+def check(arr):
+    if arr[0] + arr[1] >= rocks_sum:
+        return True
+    else: 
+        return False
+def get_arrays(p1, p2):
+    p1plus = p1 + 1
+    p1mult = p1 * 2
+    p2plus = p2 + 1
+    p2mult = p2 * 2
+    return [[p1plus, p2], [p1mult, p2], [p1, p2plus], [p1, p2mult]]
+    
 def resolve_recursively(arr):
     new_arr = []
     if type(arr) == bool:
@@ -28,16 +43,84 @@ def resolve_recursively_all(arr):
         new_arr.append(item)
     return all(new_arr)
     
+def task_3(p1, p2):
+    tmp_res = []
+    tmp_res2 = False
+    tmp_arr = get_arrays(p1, p2)
+    for item in tmp_arr:
+        tmp_arr2 = get_arrays(item[0], item[1])
+        for item2 in tmp_arr2:
+            if(check(item2) and not check(item)):
+                tmp_res2 = True
+    for item in tmp_arr:
+        #print('0', item)
+        tmp_arr2 = get_arrays(item[0], item[1])
+        #print('1', tmp_arr2, check_arr(tmp_arr2))
+        #if(check_arr(tmp_arr2)):
+            #continue
+        
+        for item2 in tmp_arr2:
+            tmp_arr3 = get_arrays(item2[0], item2[1])
+            if(check_arr(tmp_arr3)):
+                tmp_res.append(False)
+                continue
+            res = True
+            for item3 in tmp_arr3:
+                tmp_arr4 = get_arrays(item3[0], item3[1])
+                res = res and check_arr(tmp_arr4)
+            #print('2', tmp_arr3, check_arr(tmp_arr3))
+            if not check_arr(tmp_arr2) and not check_arr(tmp_arr3) and res:
+                tmp_res.append(True)
+            else: 
+                tmp_res.append(False)
+    #print(p2, tmp_res)
+    n = 4
+    #print([tmp_res[i * n:(i + 1) * n] for i in range((len(tmp_res) + n - 1) // n )] )
+    final = 0
+    for i in tmp_res:
+        if resolve_recursively(i):
+            final = final + 1
+    return final == 3 and tmp_res2 
+    
 def unified_resolver(a, b, winMove, prevMoves=0):
     if a + b >= rocks_sum:
-        return winMove % 2 == prevMoves % 2
+        return a + b >= rocks_sum
     if prevMoves == winMove:
-        return False
-    h = [unified_resolver(a+2, b, winMove, prevMoves+1),
+        return a + b >= rocks_sum
+    h = [unified_resolver(a+1, b, winMove, prevMoves+1),
           unified_resolver(a*2, b, winMove, prevMoves+1), 
-          unified_resolver(a, b+2, winMove, prevMoves+1),
+          unified_resolver(a, b+1, winMove, prevMoves+1),
           unified_resolver(a, b*2, winMove, prevMoves+1)]
     return h
-if task_type == 2:
-    print("Задание 1:", min(s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) and resolve_recursively(unified_resolver(start_left,s,2))))
-    print("Задание 2:", *[s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) and any(i for i in range(len(unified_resolver(start_left,s,1))) if resolve_recursively_all(unified_resolver(start_left,s,3)[i]))])
+
+print("Задание 1:", min(s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) and resolve_recursively(unified_resolver(start_left,s,2))))
+#for s in range(1, s_max+1):
+    #print(s)
+    #print((unified_resolver(start_left,s,1)))
+
+    #print((unified_resolver(start_left,s,2)))
+    #for i in range(len(unified_resolver(start_left,s,2))):
+        #print('i', i, unified_resolver(start_left,s,3)[i])
+        #print(resolve_recursively_all(unified_resolver(start_left,s,3)[i]))
+        #print(resolve_recursively(unified_resolver(start_left,s,1)), resolve_recursively(unified_resolver(start_left,s,2)[i]), '->', resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True]))
+        #print(*[resolve_recursively([resolve_recursively(unified_resolver(start_left,s,4)[i][j][k]) for k in range(1 if type(unified_resolver(start_left,s,4)[i][j]) == bool else len(unified_resolver(start_left,s,4)[i][j])) if True]) for j in range(1 if type(unified_resolver(start_left,s,3)[i]) == bool else len(unified_resolver(start_left,s,3)[i])) if True])
+        #for j in range(0 if type(unified_resolver(start_left,s,3)[i]) == bool else len(unified_resolver(start_left,s,3)[i])):
+            #print('j', j, unified_resolver(start_left,s,4)[i][j])
+            #print(resolve_recursively(unified_resolver(start_left,s,4)[i][j]))
+            #print(resolve_recursively(unified_resolver(start_left,s,3)[i][j]), resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,4)[i][j][k]) for k in range(0 if type(unified_resolver(start_left,s,4)[i][j]) == bool else len(unified_resolver(start_left,s,4)[i][j])) if True]))
+            #for k in range(0 if type(unified_resolver(start_left,s,4)[i][j]) == bool else len(unified_resolver(start_left,s,4)[i][j])):
+                #print('k', k, unified_resolver(start_left,s,4)[i][j][k])
+    #print()
+        #print('result is: ', True if not resolve_recursively(unified_resolver(start_left,s,1)) and not resolve_recursively(unified_resolver(start_left,s,2)[i]) and resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True]) else False)
+    #print('temp 2 is: ', resolve_recursively(unified_resolver(start_left,s,1)), *[i for i in range(len(unified_resolver(start_left,s,2))) if not resolve_recursively(unified_resolver(start_left,s,2)[i]) and resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True])], any([i for i in range(len(unified_resolver(start_left,s,2))) if not resolve_recursively(unified_resolver(start_left,s,2)[i]) and resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True])]))
+print("Задание 2:", 
+*[s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) 
+and 
+any(
+    True for i in range(len(unified_resolver(start_left,s,2))) if not resolve_recursively(unified_resolver(start_left,s,2)[i]) and resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True]))])
+print("Задание 3:", *(s for s in range(1, s_max+1) if task_3(start_left, s))) 
+#print("Задание 2:", 
+#*[s for s in range(1,s_max+1) if not resolve_recursively(unified_resolver(start_left,s,1)) 
+#and 
+#any(
+    #True for i in range(len(unified_resolver(start_left,s,2))) if not resolve_recursively(unified_resolver(start_left,s,2)[i]) and not resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,3)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True]) and resolve_recursively_all([resolve_recursively(unified_resolver(start_left,s,4)[i][j]) for j in range(len(unified_resolver(start_left,s,3)[i])) if True]))])
